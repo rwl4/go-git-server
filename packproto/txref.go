@@ -25,7 +25,7 @@ func newTxRefFromBytes(line []byte) (rt txRef, err error) {
 	rt = txRef{
 		oldHash: plumbing.NewHash(arr[0]),
 		newHash: plumbing.NewHash(arr[1]),
-		ref:     strings.TrimSuffix(arr[2], string([]byte{0})),
+		ref:     strings.Split(arr[2], string([]byte{0}))[0],
 	}
 
 	return
