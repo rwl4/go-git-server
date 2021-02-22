@@ -76,7 +76,7 @@ func (proto *Protocol) ListReferences(service string, refs []*plumbing.Reference
 	// Start sending info
 	enc := pktline.NewEncoder(proto.w)
 	enc.Encode([]byte(fmt.Sprintf("# service=%s\n", service)))
-	enc.Encode(nil)
+	enc.Encode(pktline.FlushPkt)
 
 	// Repo empty so send zeros
 	if len(refs) == 0 {
@@ -84,7 +84,7 @@ func (proto *Protocol) ListReferences(service string, refs []*plumbing.Reference
 		b0 = append(b0, nullCapabilities()...)
 
 		enc.Encode(append(b0, 10))
-		enc.Encode(nil)
+		enc.Encode(pktline.FlushPkt)
 		return
 	}
 
@@ -101,7 +101,7 @@ func (proto *Protocol) ListReferences(service string, refs []*plumbing.Reference
 	for _, ref := range refs[1:] {
 		enc.Encode([]byte(fmt.Sprintf("%s %s\n", ref.Hash(), ref.Name())))
 	}
-	enc.Encode(nil)
+	enc.Encode(pktline.FlushPkt)
 }
 
 // UploadPack implements the git upload pack protocol
@@ -147,7 +147,7 @@ func (proto *Protocol) ReceivePack(objstore storer.Storer) error {
 		}
 	}
 
-	enc.Encode(nil)
+	enc.Encode(pktline.FlushPkt)
 	return err
 }
 
