@@ -46,10 +46,26 @@ func (svr *GitHTTPService) ListReferences(w http.ResponseWriter, r *http.Request
 	}
 
 	refs := make([]*plumbing.Reference, 0)
-	riter.ForEach(func(ref *plumbing.Reference) error {
-		refs = append(refs, ref)
+	err = riter.ForEach(func(ref *plumbing.Reference) error {
+		switch ref.Type() {
+		case plumbing.SymbolicReference:
+			_ref, err := svr.stores.GetStore(repoID).Reference(ref.Target())
+			if err == nil && _ref.Type() == plumbing.HashReference {
+				refs = append(refs, plumbing.NewHashReference(ref.Name(), _ref.Hash()))
+			}
+		case plumbing.HashReference:
+			refs = append(refs, ref)
+		case plumbing.InvalidReference:
+			// TODO
+		default:
+			// TODO
+		}
+
 		return nil
 	})
+	if err != nil {
+		// TODO
+	}
 
 	w.Header().Add("Content-Type", fmt.Sprintf("application/x-%s-advertisement", service))
 	w.WriteHeader(200)
