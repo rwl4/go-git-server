@@ -70,7 +70,6 @@ func (server *HTTPTransport) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
-
 	}
 
 	repoID := r.URL.Path[1:]
@@ -81,7 +80,9 @@ func (server *HTTPTransport) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	server.repo.ServeHTTP(w, r.WithContext(ctx))
+	if server.repo != nil {
+		server.repo.ServeHTTP(w, r.WithContext(ctx))
+	}
 }
 
 // ListenAndServe starts and listener on addr and serves the router handlers
