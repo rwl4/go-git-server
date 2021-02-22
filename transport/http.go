@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/euforia/go-git-server/packproto"
+	"github.com/animeshon/go-git-server/packproto"
 )
 
 type ctxKey string

@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/euforia/go-git-server/repository"
-	"github.com/euforia/go-git-server/storage"
-	"github.com/euforia/go-git-server/transport"
+	"github.com/animeshon/go-git-server/repository"
+	"github.com/animeshon/go-git-server/storage"
+	"github.com/animeshon/go-git-server/transport"
 )
 
 var (

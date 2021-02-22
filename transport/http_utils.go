@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/euforia/go-git-server/packproto"
+	"github.com/animeshon/go-git-server/packproto"
 )
 
 func isListRefRequest(r *http.Request) (repo string, service string, ok bool) {

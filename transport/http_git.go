@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/euforia/go-git-server/packproto"
-	"github.com/euforia/go-git-server/storage"
-	"gopkg.in/src-d/go-git.v4/plumbing"
+	"github.com/animeshon/go-git-server/packproto"
+	"github.com/animeshon/go-git-server/storage"
+	"github.com/go-git/go-git/v5/plumbing"
 )
 
 // GitHTTPService is a git http server

@@ -6,11 +6,11 @@ import (
 	"log"
 	"strings"
 
-	"gopkg.in/src-d/go-git.v4/plumbing"
-	"gopkg.in/src-d/go-git.v4/plumbing/storer"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/storer"
 
-	"github.com/euforia/go-git-server/packfile"
-	"github.com/euforia/go-git-server/pktline"
+	"github.com/animeshon/go-git-server/packfile"
+	"github.com/animeshon/go-git-server/pktline"
 )
 
 const (
