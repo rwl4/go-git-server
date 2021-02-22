@@ -4,12 +4,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/animeshon/go-git-server/packproto"
+	"github.com/go-git/go-git/v5/plumbing/transport"
 )
 
 func isListRefRequest(r *http.Request) (repo string, service string, ok bool) {
 	ss := r.URL.Query()["service"]
-	if len(ss) < 1 || (ss[0] != packproto.GitRecvPack && ss[0] != packproto.GitUploadPack) {
+	if len(ss) < 1 || (ss[0] != transport.ReceivePackServiceName && ss[0] != transport.UploadPackServiceName) {
 		return
 	}
 	service = ss[0]
@@ -24,14 +24,14 @@ func isListRefRequest(r *http.Request) (repo string, service string, ok bool) {
 
 func isPackfileRequest(r *http.Request) (repo string, service string, ok bool) {
 	switch {
-	case strings.HasSuffix(r.URL.Path, "/"+packproto.GitRecvPack):
-		repo = strings.TrimPrefix(strings.TrimSuffix(r.URL.Path, "/"+packproto.GitRecvPack), "/")
-		service = packproto.GitRecvPack
+	case strings.HasSuffix(r.URL.Path, "/"+transport.ReceivePackServiceName):
+		repo = strings.TrimPrefix(strings.TrimSuffix(r.URL.Path, "/"+transport.ReceivePackServiceName), "/")
+		service = transport.ReceivePackServiceName
 		ok = true
 
-	case strings.HasSuffix(r.URL.Path, "/"+packproto.GitUploadPack):
-		repo = strings.TrimPrefix(strings.TrimSuffix(r.URL.Path, "/"+packproto.GitUploadPack), "/")
-		service = packproto.GitUploadPack
+	case strings.HasSuffix(r.URL.Path, "/"+transport.UploadPackServiceName):
+		repo = strings.TrimPrefix(strings.TrimSuffix(r.URL.Path, "/"+transport.UploadPackServiceName), "/")
+		service = transport.UploadPackServiceName
 		ok = true
 	}
 

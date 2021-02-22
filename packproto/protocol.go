@@ -7,17 +7,11 @@ import (
 	"strings"
 
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/format/pktline"
 	"github.com/go-git/go-git/v5/plumbing/storer"
+	"github.com/go-git/go-git/v5/plumbing/transport"
 
 	"github.com/animeshon/go-git-server/packfile"
-	"github.com/animeshon/go-git-server/pktline"
-)
-
-const (
-	// GitRecvPack is the receive pack service name
-	GitRecvPack = "git-receive-pack"
-	// GitUploadPack is the upload pack service name
-	GitUploadPack = "git-upload-pack"
 )
 
 // Protocol implements the git pack protocol
@@ -98,7 +92,7 @@ func (proto *Protocol) ListReferences(service string, refs []*plumbing.Reference
 	lh := append([]byte(fmt.Sprintf("%s %s", refs[0].Hash(), refs[0].Name())), '\x00')
 	lh = append(lh, capabilities()...)
 
-	if service == GitUploadPack {
+	if service == transport.UploadPackServiceName {
 		lh = append(lh, []byte(" symref=HEAD:"+refs[0].Name())...)
 	}
 
@@ -159,14 +153,22 @@ func (proto *Protocol) ReceivePack(objstore storer.Storer) error {
 
 func parseReceivePackClientRefLines(r io.Reader) ([]txRef, error) {
 	var (
-		dec   = pktline.NewDecoder(r)
+		dec   = pktline.NewScanner(r)
 		lines [][]byte
 	)
 
 	// Read refs from client
-	if err := dec.DecodeUntilFlush(&lines); err != nil {
-		//log.Printf("[receive-pack] ERR %v", e)
-		return nil, err
+	for dec.Scan() {
+		line := dec.Bytes()
+		if len(line) == 0 {
+			break
+		}
+
+		lines = append(lines, line)
+	}
+
+	if dec.Err() != nil {
+		return nil, dec.Err()
 	}
 
 	txs := make([]txRef, len(lines))
@@ -184,17 +186,12 @@ func parseReceivePackClientRefLines(r io.Reader) ([]txRef, error) {
 }
 
 func parseUploadPackWantsAndHaves(r io.Reader) (wants, haves []plumbing.Hash, err error) {
+	dec := pktline.NewScanner(r)
 
-	dec := pktline.NewDecoder(r)
-
-	for {
-		var line []byte
-		if err = dec.Decode(&line); err != nil {
-			break
-		} else if len(line) == 0 {
+	for dec.Scan() {
+		line := dec.Bytes()
+		if len(line) == 0 {
 			continue
-		} else {
-			line = line[:len(line)-1]
 		}
 
 		if string(line) == "done" {
@@ -210,8 +207,11 @@ func parseUploadPackWantsAndHaves(r io.Reader) (wants, haves []plumbing.Hash, er
 
 		case "have":
 			haves = append(haves, plumbing.NewHash(op[1]))
-
 		}
+	}
+
+	if dec.Err() != nil {
+		return nil, nil, dec.Err()
 	}
 
 	return

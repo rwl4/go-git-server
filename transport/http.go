@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/animeshon/go-git-server/packproto"
+	"github.com/go-git/go-git/v5/plumbing/transport"
 )
 
 type ctxKey string
@@ -61,9 +61,9 @@ func (server *HTTPTransport) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if repoID, service, ok := isPackfileRequest(r); ok {
 			ctx := context.WithValue(r.Context(), ctxKeyRepo, repoID)
 			switch service {
-			case packproto.GitRecvPack:
+			case transport.ReceivePackServiceName:
 				server.git.ReceivePack(w, r.WithContext(ctx))
-			case packproto.GitUploadPack:
+			case transport.UploadPackServiceName:
 				server.git.UploadPack(w, r.WithContext(ctx))
 			default:
 				w.WriteHeader(404)
