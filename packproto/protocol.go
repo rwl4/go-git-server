@@ -93,7 +93,9 @@ func (proto *Protocol) ListReferences(service string, refs []*plumbing.Reference
 	lh = append(lh, capabilities()...)
 
 	if service == transport.UploadPackServiceName {
-		lh = append(lh, []byte(" symref=HEAD:"+refs[0].Name())...)
+		// ! TODO: refs/heads/master should not be hardcoded, but should rather come from the HEAD reference.
+		// ! refs[0].Target()
+		lh = append(lh, []byte(" symref="+refs[0].Name()+":refs/heads/master")...)
 	}
 
 	enc.Encode(append(lh, 10))
