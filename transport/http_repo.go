@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/animeshon/go-git-server/repository"
+	"github.com/rwl4/go-git-server/repository"
 )
 
 type RepoHTTPService struct {

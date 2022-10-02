@@ -5,15 +5,17 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
-	"github.com/animeshon/go-git-server/repository"
-	"github.com/animeshon/go-git-server/storage"
-	"github.com/animeshon/go-git-server/transport"
+	"github.com/rwl4/go-git-server/repository"
+	"github.com/rwl4/go-git-server/storage"
+	"github.com/rwl4/go-git-server/transport"
 )
 
 var (
-	httpAddr = "127.0.0.1:12345"
-	dataDir  = flag.String("data-dir", "", "dir")
+	dataDir = flag.String("data-dir", "", "dir")
+	host    = flag.String("host", "127.0.0.1", "host")
+	port    = flag.String("port", "12345", "port")
 )
 
 func init() {
@@ -40,8 +42,10 @@ func main() {
 	mgr := makeManager()
 	rh := transport.NewRepoHTTPService(mgr)
 
+	listenAddr := strings.Join([]string{*host, *port}, ":")
+
 	server := transport.NewHTTPTransport(gh, rh)
-	if err := server.ListenAndServe(httpAddr); err != nil {
+	if err := server.ListenAndServe(listenAddr); err != nil {
 		log.Println(err)
 	}
 }

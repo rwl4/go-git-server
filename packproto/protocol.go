@@ -11,7 +11,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/go-git/go-git/v5/plumbing/transport"
 
-	"github.com/animeshon/go-git-server/packfile"
+	"github.com/rwl4/go-git-server/packfile"
 )
 
 // Protocol implements the git pack protocol
